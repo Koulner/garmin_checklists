@@ -1,0 +1,3630 @@
+# Akquise App
+## Autonomous MVP Master Specification
+
+**Dokumenttyp:** Product Requirements Document + Technical Specification + Autonomous Agent Operating Instructions  
+**Projektstatus:** MVP / erste produktiv nutzbare Version  
+**Primärer Nutzer:** Freelancer / Solo-Selbstständiger  
+**Langfristige Vision:** Vermarktbares Lead-Generation- und Freelancer-Sales-Tool  
+**Priorität:** Zuverlässigkeit der Daten und Analysen vor Feature-Menge
+
+---
+
+# 1. Mission des Projekts
+
+Baue eine produktiv nutzbare Webanwendung, mit der Freelancer automatisiert potenzielle Kunden finden, analysieren, bewerten und anschließend in einem einfachen CRM verwalten können.
+
+Die Anwendung begann konzeptionell als Tool zur Identifikation von Unternehmen mit schlechten oder veralteten Websites, um Website-Relaunch-Leads zu finden.
+
+Der langfristige Produktgedanke ist jedoch größer:
+
+> Die Anwendung soll zu einem universellen Lead-Finder und Akquise-CRM für Freelancer werden, mit dem Leads für unterschiedliche Dienstleistungen gefunden, analysiert, qualifiziert und bearbeitet werden können.
+
+Der MVP konzentriert sich weiterhin primär auf den **Use Case Website-Relaunch**, muss architektonisch aber so aufgebaut werden, dass später weitere Scoring-Profile bzw. Dienstleistungen ergänzt werden können.
+
+Beispiele zukünftiger Services:
+
+- Website-Relaunch
+- SEO
+- Local SEO
+- Google Business Optimierung
+- Social Media
+- Branding
+- Fotografie
+- Performance Marketing
+- Conversion Optimierung
+- E-Commerce
+- Automatisierung
+- Softwareentwicklung
+
+Der MVP darf daher nicht so hart auf Website-Relaunch verdrahtet sein, dass weitere Analyseprofile später nur durch einen Rewrite möglich wären.
+
+---
+
+# 2. Wichtigstes Produktprinzip
+
+## Datenqualität ist wichtiger als Quantität.
+
+Die Anwendung darf niemals einen scheinbar präzisen Wert anzeigen, wenn die zugrunde liegenden Daten unsicher oder unvollständig sind.
+
+Insbesondere gilt:
+
+> Die App darf nicht behaupten, ein Unternehmen habe keine Website, nur weil die ursprüngliche Datenquelle keine Website geliefert hat.
+
+Ebenso gilt:
+
+> Die App darf nicht behaupten, eine Website habe kein Kontaktformular oder eine bestimmte Funktion nicht, wenn lediglich die Startseite analysiert wurde.
+
+Jede Analyse muss daher:
+
+1. mehrere Datenquellen berücksichtigen,
+2. Website-Informationen nachrecherchieren,
+3. relevante Unterseiten crawlen,
+4. Unsicherheit explizit modellieren,
+5. Ergebnisse mit Evidenz versehen,
+6. zwischen `nicht vorhanden` und `nicht feststellbar` unterscheiden.
+
+---
+
+# 3. Definition des MVP
+
+Der MVP ist **kein Prototyp**.
+
+Er soll eine erste echte, lokal oder auf einem privaten Server nutzbare Produktversion sein.
+
+Der Nutzer muss damit einen vollständigen Workflow durchführen können:
+
+```text
+Suchgebiet + Branche definieren
+        ↓
+Lead-Quellen auswählen
+        ↓
+Unternehmen finden
+        ↓
+Daten zusammenführen
+        ↓
+Website finden und validieren
+        ↓
+Website vollständig genug analysieren
+        ↓
+Lead bewerten
+        ↓
+Interessante Leads filtern
+        ↓
+Lead im CRM verwalten
+        ↓
+Kontakt / Follow-up dokumentieren
+```
+
+Der MVP gilt erst als fertig, wenn dieser Flow Ende-zu-Ende funktioniert.
+
+---
+
+# 4. MVP Scope
+
+Der MVP MUSS folgende Module enthalten:
+
+1. Dashboard
+2. Lead-Suche
+3. Datenquellen
+4. Lead-Deduplizierung
+5. Website Discovery
+6. Website Validation
+7. Website Crawler
+8. Website Analyzer
+9. Website-Relaunch-Scoring
+10. Lead Detail View
+11. Lead CRM
+12. Notizen und Status
+13. Filter und Sortierung
+14. CSV Export
+15. Job-/Analyse-Historie
+16. Settings
+17. API-Key-Verwaltung
+18. Fehlerbehandlung
+19. Logging
+20. automatisierte Tests
+
+---
+
+# 5. Explizite Non-Goals des ersten MVP
+
+Folgendes soll NICHT unnötig in den ersten MVP eingebaut werden:
+
+- Zahlungsabwicklung
+- SaaS Billing
+- Subscription Management
+- komplexe Multi-Tenancy
+- Team-Management
+- automatisierter E-Mail-Versand
+- Cold-Mail-Kampagnen
+- LinkedIn-Automatisierung
+- Social-Media-Automatisierung
+- KI-generierte Akquise-E-Mails als Kernfunktion
+- LLM-API-Abhängigkeit
+- vollwertiges Sales-Automation-System
+- native Mobile App
+- App Store Deployment
+- Enterprise Permissions
+- komplexe Rollenverwaltung
+- Data Warehouse
+- Microservice-Architektur
+- Kubernetes
+- zwingende Redis-Infrastruktur
+- unnötige Cloud-Abhängigkeiten
+
+Der Code soll Erweiterbarkeit ermöglichen, aber **keine Zukunftsfeatures vorab implementieren**, wenn sie für den MVP keinen unmittelbaren Nutzen bringen.
+
+---
+
+# 6. Kostenprinzip
+
+Eine zentrale Anforderung ist:
+
+> Die Anwendung soll ohne laufende API-Kosten sinnvoll nutzbar sein.
+
+Kostenpflichtige APIs dürfen zusätzliche Qualität liefern, aber niemals zwingende Voraussetzung für den Kernworkflow sein.
+
+Priorität:
+
+```text
+lokale Analyse
+↓
+Open Data
+↓
+kostenlose / vorhandene Quellen
+↓
+optionale APIs
+↓
+kostenpflichtige Services nur als Erweiterung
+```
+
+Der MVP darf insbesondere nicht von einer LLM-API abhängig sein.
+
+Website-Analyse und Scoring sollen deterministisch und lokal durchgeführt werden.
+
+---
+
+# 7. Empfohlener Tech Stack
+
+Der Agent darf begründet abweichen, wenn das bestehende Repository bereits eine andere sinnvolle Architektur besitzt.
+
+Bevorzugter Stack:
+
+## Frontend
+
+- React
+- Next.js
+- TypeScript
+- Tailwind CSS
+- etablierte UI-Komponentenbibliothek wie shadcn/ui
+
+## Backend
+
+Next.js Server Layer oder ein klar getrennter Node.js-Service innerhalb desselben Repositories.
+
+Kein Microservice-Zwang.
+
+## Datenbank
+
+PostgreSQL.
+
+ORM:
+
+- Prisma
+- Drizzle
+- oder vergleichbare etablierte TypeScript-Lösung
+
+Entscheide dich für **eine** Variante.
+
+## Crawling
+
+Kombination aus:
+
+- normalem HTTP Fetch
+- HTML Parser
+- Headless Browser mit Playwright
+
+HTTP Fetch soll bevorzugt werden.
+
+Playwright soll dann verwendet werden, wenn:
+
+- JavaScript Rendering benötigt wird,
+- Navigation dynamisch erzeugt wird,
+- relevante Inhalte ansonsten fehlen,
+- SPA-Verhalten erkannt wird.
+
+## Tests
+
+- Unit Tests
+- Integration Tests
+- Browser-/E2E-Tests
+- Test Runner aus dem bestehenden Stack
+
+## Deployment
+
+MVP muss mindestens ausführbar sein über:
+
+```bash
+docker compose up
+```
+
+oder eine ebenso einfache dokumentierte Alternative.
+
+---
+
+# 8. Architekturprinzip
+
+Die Anwendung soll als **modularer Monolith** aufgebaut werden.
+
+Empfohlene logische Module:
+
+```text
+/modules
+    /search
+    /sources
+    /leads
+    /website-discovery
+    /crawler
+    /analysis
+    /scoring
+    /crm
+    /jobs
+    /settings
+```
+
+Datenquellen müssen über Adapter abstrahiert werden.
+
+Beispiel:
+
+```ts
+interface LeadSourceAdapter {
+  search(input: SearchInput): Promise<SourceLead[]>
+}
+```
+
+Implementierungen:
+
+```text
+OpenStreetMapSource
+GelbeSeitenSource
+GooglePlacesSource
+```
+
+Das gleiche Prinzip gilt für Website Discovery:
+
+```text
+WebsiteDiscoveryProvider
+```
+
+und Scoring:
+
+```text
+ScoringProfile
+```
+
+MVP:
+
+```text
+WebsiteRelaunchScoringProfile
+```
+
+Später:
+
+```text
+SeoScoringProfile
+LocalSeoScoringProfile
+SocialMediaScoringProfile
+...
+```
+
+---
+
+# 9. Kern-Datenmodell
+
+Die genaue ORM-Struktur darf angepasst werden.
+
+Folgende Entitäten müssen logisch vorhanden sein.
+
+---
+
+## 9.1 Lead
+
+Beispiel:
+
+```ts
+Lead {
+  id
+  companyName
+
+  street
+  postalCode
+  city
+  country
+
+  latitude
+  longitude
+
+  phone
+  email
+
+  websiteUrl
+  websiteStatus
+
+  category
+  industry
+
+  crmStatus
+  priority
+
+  createdAt
+  updatedAt
+}
+```
+
+---
+
+# 10. Website Status
+
+`websiteStatus` darf kein simples Boolean sein.
+
+Verwende einen Status ähnlich:
+
+```text
+unknown
+source_provided
+candidate_found
+verified
+ambiguous
+inaccessible
+search_failed
+no_website_found
+```
+
+WICHTIG:
+
+`no_website_found` darf ausschließlich gesetzt werden, wenn:
+
+1. Datenquellen keine Website geliefert haben,
+2. Website Discovery ausgeführt wurde,
+3. mindestens ein Discovery-Verfahren funktioniert hat,
+4. keine ausreichend sichere Website gefunden wurde.
+
+Wenn die Suchmaschine technisch nicht erreichbar war:
+
+```text
+search_failed
+```
+
+nicht:
+
+```text
+no_website_found
+```
+
+---
+
+# 11. Lead Provenance
+
+Jede Information muss nachvollziehbar sein.
+
+Beispiel:
+
+```text
+Company Name
+→ OpenStreetMap
+
+Phone
+→ Gelbe Seiten
+
+Website
+→ Website Discovery
+
+Address
+→ OpenStreetMap + Google Places
+```
+
+Speichere deshalb Source Records.
+
+Beispiel:
+
+```ts
+LeadSourceRecord {
+  id
+  leadId
+  source
+  externalId
+  rawData
+  collectedAt
+}
+```
+
+Originaldaten sollen soweit sinnvoll erhalten bleiben.
+
+---
+
+# 12. Lead-Suche
+
+Die Suchmaske muss mindestens enthalten:
+
+- Suchbegriff / Branche
+- Ort
+- optional Radius
+- maximale Anzahl Ergebnisse
+- Datenquellen
+
+Beispiel:
+
+```text
+Branche:
+[ Zahnarzt ]
+
+Ort:
+[ Hamburg ]
+
+Radius:
+[ 20 km ]
+
+Quellen:
+
+[x] Gelbe Seiten
+[x] OpenStreetMap
+[ ] Google Places
+```
+
+---
+
+# 13. Regeln für Datenquellen
+
+Die bisherige Anforderung lautet:
+
+> Gelbe Seiten darf KEIN Pflichtfeld sein.
+
+Es muss mindestens eine der folgenden Quellen ausgewählt sein:
+
+```text
+Gelbe Seiten
+ODER
+OpenStreetMap
+```
+
+Beide dürfen gleichzeitig ausgewählt werden.
+
+Gültig:
+
+```text
+Gelbe Seiten = true
+OSM = false
+```
+
+oder:
+
+```text
+Gelbe Seiten = false
+OSM = true
+```
+
+oder:
+
+```text
+Gelbe Seiten = true
+OSM = true
+```
+
+Ungültig:
+
+```text
+Gelbe Seiten = false
+OSM = false
+```
+
+sofern Google Places lediglich als ergänzende Quelle behandelt wird.
+
+---
+
+# 14. Google Places
+
+Google Places ist optional.
+
+Die Option soll nur angezeigt bzw. aktiviert werden, wenn ein Google-Places-API-Key hinterlegt wurde.
+
+Beispiel:
+
+Ohne API Key:
+
+```text
+[x] Gelbe Seiten
+[x] OpenStreetMap
+
+Google Places nicht konfiguriert
+```
+
+Mit API Key:
+
+```text
+[x] Gelbe Seiten
+[x] OpenStreetMap
+[x] Google Places
+```
+
+Google Places darf:
+
+- Unternehmensinformationen ergänzen,
+- Adressen validieren,
+- Websites liefern,
+- Telefonnummern ergänzen,
+- Datenqualität erhöhen.
+
+Google Places ist jedoch **keine Pflichtabhängigkeit**.
+
+---
+
+# 15. Settings
+
+Erstelle eine Settings-Seite.
+
+Mindestens:
+
+```text
+Datenquellen
+Website Discovery
+Crawler
+API Keys
+Analyse Defaults
+```
+
+API Keys dürfen nicht versehentlich ins Frontend oder Logs gelangen.
+
+Wenn Keys persistent gespeichert werden, sind sie angemessen zu schützen.
+
+Mindestens:
+
+- niemals Klartext im Log
+- niemals im Client Bundle
+- Maskierung im UI
+- `.env.example`
+- Secrets niemals in Git committen
+
+---
+
+# 16. OpenStreetMap / Overpass
+
+OSM soll über einen separaten Adapter angesprochen werden.
+
+Ein Fehler des Overpass Servers darf niemals den gesamten Suchjob dauerhaft zerstören.
+
+Bekanntes reales Fehlerszenario:
+
+```text
+504 Gateway Timeout
+```
+
+Deshalb implementieren:
+
+## Retry
+
+Beispielsweise:
+
+```text
+Attempt 1
+↓
+kurze Pause
+↓
+Attempt 2
+↓
+längere Pause
+↓
+Attempt 3
+```
+
+Verwende exponentiellen Backoff mit Jitter.
+
+---
+
+# 17. Overpass Fallback
+
+Wenn ein Overpass-Endpunkt nicht reagiert:
+
+1. Retry
+2. alternativen Endpunkt versuchen
+3. Query gegebenenfalls verkleinern
+4. Gebiet gegebenenfalls segmentieren
+
+Große geografische Abfragen sollen nicht blind als riesige Query ausgeführt werden.
+
+Bei Bedarf Gebiet in kleinere Bounding Boxes teilen.
+
+---
+
+# 18. Source Fehlerisolation
+
+Wenn OSM ausfällt, aber Gelbe Seiten funktioniert:
+
+> Der gesamte Suchjob darf nicht fehlschlagen.
+
+Beispiel:
+
+```text
+Gelbe Seiten:
+428 Ergebnisse
+
+OSM:
+Fehler nach Retries
+
+Job:
+completed_with_warnings
+```
+
+Der Benutzer muss sehen können, dass eine Quelle fehlgeschlagen ist.
+
+---
+
+# 19. Gelbe Seiten
+
+Implementiere Gelbe Seiten als separaten Source Adapter.
+
+Die Implementierung muss robust gegenüber:
+
+- fehlenden Feldern
+- Layoutänderungen
+- Pagination
+- leeren Ergebnissen
+- Timeouts
+- HTTP Fehlern
+
+sein.
+
+Keine Schutzmechanismen umgehen.
+
+Keine CAPTCHA- oder Anti-Bot-Systeme aggressiv umgehen.
+
+Bei Blockierung:
+
+```text
+source_blocked
+```
+
+oder entsprechender Fehlerstatus.
+
+Andere Datenquellen müssen weiter funktionieren.
+
+---
+
+# 20. Normalisierung
+
+Vor dem Zusammenführen müssen Daten normalisiert werden.
+
+Beispiele:
+
+## Telefonnummern
+
+```text
++49 ...
+0049 ...
+0451 ...
+```
+
+in vergleichbare Form bringen.
+
+## URLs
+
+```text
+https://example.de/
+https://www.example.de
+http://example.de
+```
+
+auf kanonische Domains bzw. URLs normalisieren.
+
+## Firmennamen
+
+Normalisierung für Matching:
+
+```text
+Mustermann GmbH
+mustermann gmbh
+Mustermann GmbH & Co. KG
+```
+
+aber Originalwert weiterhin speichern.
+
+## Adresse
+
+Whitespace und Schreibvarianten normalisieren.
+
+---
+
+# 21. Lead-Deduplizierung
+
+Wenn dasselbe Unternehmen aus mehreren Quellen kommt, darf daraus nicht mehrfach derselbe Lead entstehen.
+
+Deduplizierung soll mehrstufig erfolgen.
+
+Starke Signale:
+
+1. gleiche Website Domain
+2. gleiche Telefonnummer
+3. gleiche vollständige Adresse
+4. gleiche externe IDs innerhalb derselben Quelle
+
+Mittlere Signale:
+
+```text
+ähnlicher Firmenname
++
+gleiche Stadt
++
+nahe Geokoordinaten
+```
+
+Unsichere Matches dürfen nicht blind zusammengeführt werden.
+
+Intern kann ein Matching Confidence Score verwendet werden.
+
+Beispiel:
+
+```text
+0.95 → automatisch zusammenführen
+0.70 → eventuell Review
+0.30 → getrennt lassen
+```
+
+Schwellwerte zentral konfigurierbar halten.
+
+---
+
+# 22. Website Discovery
+
+Dies ist eine Kernfunktion des MVP.
+
+Problem:
+
+Datenquellen enthalten häufig keine Website, obwohl das Unternehmen eine besitzt.
+
+Deshalb MUSS ein eigener Discovery-Prozess existieren.
+
+Pipeline:
+
+```text
+Website aus Quelle vorhanden?
+        ↓
+Ja → validieren
+        ↓
+Nein
+        ↓
+alternative Quellen prüfen
+        ↓
+Web Search durchführen
+        ↓
+Kandidaten extrahieren
+        ↓
+Kandidaten verifizieren
+        ↓
+beste Website auswählen
+```
+
+---
+
+# 23. Website Discovery Provider
+
+Implementiere Website Discovery als austauschbare Provider.
+
+Mögliche Provider:
+
+```text
+SourceWebsiteProvider
+GooglePlacesWebsiteProvider
+WebSearchProvider
+```
+
+Web Search soll so gekapselt sein, dass später unterschiedliche Suchanbieter verwendet werden können.
+
+Kein Kerncode darf direkt von einem einzelnen Suchmaschinenanbieter abhängig sein.
+
+---
+
+# 24. No-Key Website Discovery
+
+Da laufende Kosten vermieden werden sollen, soll mindestens ein Discovery-Pfad ohne kostenpflichtige API möglich sein.
+
+Dieser darf beispielsweise auf einer geeigneten öffentlich verfügbaren Websuche basieren.
+
+Die Architektur muss jedoch berücksichtigen, dass solche Provider:
+
+- Rate Limits haben,
+- ihre HTML-Struktur ändern,
+- Anfragen blockieren können.
+
+Deshalb niemals:
+
+```text
+Discovery Provider kaputt
+=
+Unternehmen hat keine Website
+```
+
+---
+
+# 25. Website Search Queries
+
+Für ein Unternehmen können beispielsweise Varianten erzeugt werden:
+
+```text
+"Firmenname" Stadt
+"Firmenname" Straße
+"Firmenname" Website
+"Firmenname" Telefonnummer
+```
+
+Nicht jede Query muss ausgeführt werden.
+
+Stoppe frühzeitig, sobald ein hochsicherer Kandidat gefunden wurde.
+
+Caching verwenden.
+
+---
+
+# 26. Website Kandidaten
+
+Suchergebnisse dürfen nicht blind übernommen werden.
+
+Typische falsche Kandidaten:
+
+```text
+facebook.com
+instagram.com
+linkedin.com
+gelbeseiten.de
+yelp.*
+11880.*
+branchenbuch.*
+tripadvisor.*
+booking.*
+```
+
+Solche Plattformen können Social/Profile URLs sein, gelten aber nicht als offizielle Firmenwebsite.
+
+Implementiere eine konfigurierbare Liste bekannter Directory- und Social-Domains.
+
+---
+
+# 27. Website Verification
+
+Ein Website-Kandidat muss gegen die Identität des Unternehmens geprüft werden.
+
+Signale:
+
+- Firmenname auf Website
+- Adresse
+- PLZ
+- Stadt
+- Telefonnummer
+- E-Mail-Adresse
+- Impressum
+- strukturierte Daten
+- `LocalBusiness` Schema
+- Seitentitel
+- Footer
+- Kontaktseite
+
+Beispiel:
+
+```text
+Firmenname Match      +0.30
+Adresse Match         +0.30
+Telefon Match         +0.25
+Stadt Match           +0.10
+Schema.org Match      +0.05
+```
+
+Die exakten Werte dürfen angepasst werden.
+
+Ziel ist nicht dieses konkrete Gewichtungsschema, sondern nachvollziehbare Verifikation.
+
+Speichere:
+
+```text
+candidateUrl
+confidence
+matchedSignals
+rejectedSignals
+verificationStatus
+```
+
+---
+
+# 28. Website Verification Zustände
+
+Beispiel:
+
+```text
+verified
+probable
+ambiguous
+rejected
+unreachable
+```
+
+Nur ein Kandidat mit ausreichender Sicherheit darf automatisch als offizielle Website übernommen werden.
+
+---
+
+# 29. Kritische Website-Regel
+
+Das UI darf **„Keine Website“** nur anzeigen, wenn Discovery erfolgreich durchgeführt wurde.
+
+Besseres UI:
+
+```text
+Website gefunden
+Website nicht gefunden
+Website unklar
+Website-Prüfung fehlgeschlagen
+Website nicht erreichbar
+Analyse ausstehend
+```
+
+Damit wird falsche Sicherheit verhindert.
+
+---
+
+# 30. Website Crawler
+
+Der bisherige Ansatz, lediglich die Homepage zu analysieren, reicht NICHT.
+
+Der Crawler muss die Website als Site betrachten.
+
+Pipeline:
+
+```text
+Homepage laden
+↓
+Links extrahieren
+↓
+Sitemap prüfen
+↓
+Navigation analysieren
+↓
+wichtige Unterseiten priorisieren
+↓
+Unterseiten crawlen
+↓
+Signale aggregieren
+```
+
+---
+
+# 31. Crawl Scope
+
+Nur dieselbe Website bzw. vertrauenswürdige Subdomains crawlen.
+
+Externe Websites nicht rekursiv verfolgen.
+
+Normalisiere URLs.
+
+Ignoriere normalerweise:
+
+```text
+mailto:
+tel:
+javascript:
+#anchors
+logout
+login redirects
+search result pages
+tracking URLs
+assets
+```
+
+Vermeide Crawl-Loops durch Query-Parameter.
+
+---
+
+# 32. Sitemap
+
+Prüfe:
+
+```text
+/sitemap.xml
+```
+
+und Angaben aus:
+
+```text
+robots.txt
+```
+
+Wenn Sitemap vorhanden:
+
+- URLs extrahieren
+- wichtige Seiten priorisieren
+- nicht zwangsläufig jede URL analysieren
+
+---
+
+# 33. Priorisierte Unterseiten
+
+Folgende Seiten sind besonders wichtig:
+
+```text
+kontakt
+contact
+
+impressum
+legal
+
+über-uns
+about
+
+leistungen
+services
+
+angebot
+portfolio
+
+termin
+booking
+
+anfrage
+request
+
+faq
+
+standorte
+locations
+```
+
+Diese Seiten sollen bevorzugt analysiert werden.
+
+---
+
+# 34. Crawl-Tiefe
+
+Der Anspruch lautet:
+
+> Die Website muss deutlich gründlicher analysiert werden als nur über die Main Page.
+
+Das bedeutet jedoch nicht, dass bei einer Website mit 50.000 Seiten jede URL gecrawlt werden muss.
+
+Verwende ein sinnvolles Crawl Budget.
+
+Default beispielsweise:
+
+```text
+maxPages: 50
+maxDepth: 4
+```
+
+Der Wert soll konfigurierbar sein.
+
+Für kleine Unternehmenswebsites wird damit normalerweise die relevante Website nahezu vollständig abgedeckt.
+
+---
+
+# 35. Crawl Priorisierung
+
+Priorität ungefähr:
+
+```text
+1. Homepage
+2. Kontakt
+3. Impressum
+4. Leistungen
+5. Über uns
+6. relevante Navigation
+7. Sitemap URLs
+8. weitere interne Seiten
+```
+
+Nicht einfach zufällig Links crawlen.
+
+---
+
+# 36. JavaScript Websites
+
+Wenn das HTML nahezu leer ist oder relevante Inhalte erst clientseitig gerendert werden:
+
+→ Playwright verwenden.
+
+Der Crawler muss SPAs und moderne JavaScript-Websites grundsätzlich analysieren können.
+
+---
+
+# 37. Crawl Speicherung
+
+Ein Crawl Run soll gespeichert werden.
+
+Beispiel:
+
+```ts
+CrawlRun {
+  id
+  leadId
+  websiteUrl
+  startedAt
+  finishedAt
+  status
+  pagesFound
+  pagesCrawled
+  errors
+}
+```
+
+---
+
+# 38. Page Record
+
+Pro Seite mindestens:
+
+```ts
+CrawledPage {
+  id
+  crawlRunId
+  url
+
+  statusCode
+  title
+
+  depth
+  contentHash
+
+  loadTime
+
+  analyzedAt
+}
+```
+
+Optional kann extrahierter Content gespeichert oder gekürzt persistiert werden.
+
+Große vollständige HTML-Dumps müssen nicht unbegrenzt gespeichert werden.
+
+---
+
+# 39. Kontaktformular-Erkennung
+
+Dies ist eine kritische Funktion.
+
+Ein Kontaktformular darf NICHT nur auf der Homepage gesucht werden.
+
+Durchsuche alle relevanten gecrawlten Seiten.
+
+Erkenne unter anderem:
+
+```html
+<form>
+```
+
+sowie Formulare mit Feldern wie:
+
+```text
+name
+email
+telefon
+phone
+nachricht
+message
+betreff
+subject
+```
+
+---
+
+# 40. Dynamische Formulare
+
+Berücksichtige:
+
+- JavaScript-generierte Formulare
+- eingebettete Formulare
+- iFrames
+- externe Formularanbieter
+
+Beispiele möglicher Integrationen:
+
+```text
+HubSpot
+Typeform
+Jotform
+Contact Form 7
+Gravity Forms
+Webflow Forms
+```
+
+Es ist nicht notwendig, jeden Anbieter perfekt zu unterstützen.
+
+Aber ein Formular, das sichtbar auf `/kontakt` gerendert wird, darf nicht als nicht vorhanden gelten.
+
+---
+
+# 41. Formular-Klassifikation
+
+Speichere beispielsweise:
+
+```text
+hasContactForm
+contactFormUrls[]
+contactFormCount
+contactFormConfidence
+```
+
+Optional:
+
+```text
+contactFormType
+```
+
+---
+
+# 42. Weitere Website Signale
+
+Der Analyzer soll unter anderem erfassen:
+
+## Technisch
+
+- HTTPS
+- Redirects
+- HTTP Errors
+- Broken internal links
+- Response Times
+- große Ressourcen
+- Mobile Viewport
+- Responsive Layout Hinweise
+- Mixed Content soweit erkennbar
+
+## SEO Basics
+
+- `<title>`
+- Meta Description
+- H1
+- Canonical
+- Robots
+- Sitemap
+- strukturierte Daten
+- relevante OpenGraph Daten
+
+## Conversion
+
+- Telefonnummer sichtbar
+- E-Mail sichtbar
+- Kontaktseite
+- Kontaktformular
+- CTA
+- Terminbuchung
+- Anfragebutton
+
+## Trust
+
+- Impressum
+- Datenschutz
+- Unternehmensadresse
+- Kontaktinformationen
+
+## Accessibility Basics
+
+- Bilder ohne Alt-Texte
+- fehlende Form Labels
+- Buttons ohne sinnvolle Beschriftung
+- grundlegende semantische Probleme
+
+---
+
+# 43. Mobile Analyse
+
+Website mindestens mit Desktop- und Mobile-Viewport analysieren.
+
+Prüfe beispielsweise:
+
+- horizontales Overflow
+- Viewport Meta Tag
+- Navigation grundsätzlich nutzbar
+- Elemente außerhalb des Viewports
+- extrem kleine bzw. problematische Layouts
+
+Keine subjektiven Aussagen wie:
+
+> „Die Website sieht hässlich aus.“
+
+Nur messbare oder nachvollziehbare Hinweise.
+
+---
+
+# 44. Scoring Grundprinzip
+
+Scoring muss:
+
+- deterministisch
+- nachvollziehbar
+- wiederholbar
+- evidenzbasiert
+
+sein.
+
+Kein zufälliger AI Score.
+
+Jeder Score muss erklärbar sein.
+
+---
+
+# 45. Zwei unterschiedliche Scores
+
+Empfohlen:
+
+## Website Relaunch Score
+
+Wie stark gibt es objektive Hinweise auf Relaunch-/Optimierungsbedarf?
+
+```text
+0 = kaum erkennbare Probleme
+100 = sehr hoher Optimierungsbedarf
+```
+
+## Analysis Confidence
+
+Wie vollständig und zuverlässig war die Analyse?
+
+```text
+0–100
+```
+
+Beispiel:
+
+```text
+Relaunch Score:
+82
+
+Confidence:
+94
+```
+
+ist wesentlich aussagekräftiger als nur:
+
+```text
+82
+```
+
+---
+
+# 46. Unknown darf nicht Fail sein
+
+Extrem wichtige Regel:
+
+Wenn ein Signal technisch nicht gemessen werden konnte:
+
+```text
+unknown
+```
+
+nicht:
+
+```text
+failed
+```
+
+Beispiel:
+
+Crawler kann Mobile Rendering aufgrund Browserfehler nicht prüfen.
+
+FALSCH:
+
+```text
+mobileFriendly = false
+```
+
+RICHTIG:
+
+```text
+mobileFriendly = unknown
+```
+
+Dadurch darf der Relaunch Score nicht künstlich steigen.
+
+Stattdessen sinkt die Confidence.
+
+---
+
+# 47. Vorgeschlagene Relaunch-Score-Kategorien
+
+Gesamt:
+
+```text
+100 Punkte
+```
+
+Mögliche Verteilung:
+
+```text
+Technical Health        20
+Mobile / Responsive     15
+Performance             15
+Conversion / Contact    15
+SEO Basics              10
+Accessibility / UX      10
+Content / Maintenance   10
+Trust / Security         5
+```
+
+Die genaue Gewichtung darf während Implementierung leicht optimiert werden.
+
+Sie muss zentral konfiguriert sein.
+
+Keine verstreuten Magic Numbers.
+
+---
+
+# 48. Technical Health – 20
+
+Beispiele:
+
+- HTTP Fehler
+- Broken Links
+- HTTPS Probleme
+- Redirect Chains
+- Render Errors
+- fehlerhafte Ressourcen
+- technische Navigation
+
+Je mehr Probleme, desto höher der Relaunch Opportunity Score.
+
+---
+
+# 49. Mobile / Responsive – 15
+
+Beispiele:
+
+- kein Viewport Meta
+- horizontales Overflow
+- Mobile Layout Probleme
+- Navigation auf Mobile nicht nutzbar
+
+---
+
+# 50. Performance – 15
+
+Möglichst lokal messen.
+
+Beispiele:
+
+- initiale Ladezeit
+- DOM Load
+- ungewöhnlich große Assets
+- extrem große Seiten
+- sehr langsame Serverantwort
+
+Keine externe PageSpeed API als Pflicht.
+
+Eine optionale Integration kann später ergänzt werden.
+
+---
+
+# 51. Conversion / Contact – 15
+
+Prüfe siteweit:
+
+- Kontaktseite vorhanden?
+- Telefonnummer?
+- E-Mail?
+- Kontaktformular?
+- klarer CTA?
+- Termin-/Anfrageoption?
+
+Wichtig:
+
+`kein Kontaktformular` ist nicht zwangsläufig ein technischer Fehler.
+
+Es ist ein möglicher Conversion Gap.
+
+Die UI soll das entsprechend formulieren.
+
+---
+
+# 52. SEO Basics – 10
+
+Beispiele:
+
+- fehlender Title
+- fehlende Meta Description
+- problematische H1-Struktur
+- fehlende Canonical
+- Sitemap fehlt
+- Robots Probleme
+
+---
+
+# 53. Accessibility / UX – 10
+
+Nur zuverlässig messbare Basics.
+
+Beispiele:
+
+- fehlende Alt Attribute
+- fehlende Form Labels
+- leere Buttons
+- problematische Linktexte
+- grobe semantische Fehler
+
+---
+
+# 54. Content / Maintenance – 10
+
+Messbare Hinweise:
+
+- Copyright-Jahr deutlich veraltet
+- tote Seiten
+- Baustellen-Texte
+- Placeholder
+- leere Leistungsseiten
+- Broken Content
+
+Nicht einfach anhand eines einzelnen Jahres einen Relaunch erzwingen.
+
+Das Signal soll Kontext berücksichtigen.
+
+---
+
+# 55. Trust / Security – 5
+
+Beispiele:
+
+- HTTPS fehlt
+- Impressum nicht gefunden
+- Datenschutzhinweis nicht gefunden
+- Kontaktidentität kaum feststellbar
+
+Rechtliche Bewertung ist NICHT Aufgabe der Anwendung.
+
+Formuliere lediglich:
+
+```text
+Impressum nicht gefunden
+```
+
+nicht:
+
+```text
+Website ist illegal
+```
+
+---
+
+# 56. Score Evidenz
+
+Jede Score-Komponente muss Evidenz speichern.
+
+Beispiel:
+
+```json
+{
+  "criterion": "contact_form",
+  "status": "passed",
+  "value": true,
+  "evidence": [
+    {
+      "url": "https://example.de/kontakt",
+      "selector": "form#contact"
+    }
+  ]
+}
+```
+
+Oder:
+
+```json
+{
+  "criterion": "viewport",
+  "status": "failed",
+  "evidence": [
+    {
+      "url": "https://example.de",
+      "reason": "missing viewport meta tag"
+    }
+  ]
+}
+```
+
+---
+
+# 57. Score Breakdown UI
+
+Im Lead Detail View:
+
+```text
+Website Relaunch Score
+████████████████░░░░ 78
+
+Confidence
+███████████████████░ 94
+```
+
+Darunter:
+
+```text
+Technical       14 / 20
+Mobile          12 / 15
+Performance     10 / 15
+Conversion      13 / 15
+SEO              8 / 10
+Accessibility    9 / 10
+Maintenance      8 / 10
+Trust            4 / 5
+```
+
+Jede Kategorie aufklappbar.
+
+Darunter konkrete Evidenz.
+
+---
+
+# 58. Kein falscher Kontaktformular-Score
+
+Akzeptanzfall:
+
+Website:
+
+```text
+https://firma.de
+```
+
+Homepage:
+
+```text
+kein Formular
+```
+
+Unterseite:
+
+```text
+https://firma.de/kontakt
+```
+
+enthält Kontaktformular.
+
+Erwartetes Ergebnis:
+
+```text
+hasContactForm = true
+```
+
+Dieser Test ist verpflichtend.
+
+---
+
+# 59. Analyse Confidence
+
+Confidence soll unter anderem berücksichtigen:
+
+- Website erreichbar?
+- Anzahl relevanter Seiten entdeckt
+- Anzahl erfolgreich gecrawlter Seiten
+- Sitemap verarbeitet?
+- Browser Rendering erfolgreich?
+- technische Checks erfolgreich?
+- Discovery Sicherheit
+
+Beispiel:
+
+```text
+40 Seiten entdeckt
+38 analysiert
+Kontakt + Leistungen + Impressum analysiert
+Browser erfolgreich
+
+Confidence: 96
+```
+
+Anderer Fall:
+
+```text
+20 Seiten entdeckt
+3 analysiert
+Server blockiert weitere Requests
+
+Confidence: 38
+```
+
+Dann darf die UI nicht so wirken, als seien nicht gefundene Features definitiv nicht vorhanden.
+
+---
+
+# 60. Overall Lead Opportunity
+
+Architektur soll später zusätzliche Scores unterstützen.
+
+Optional kann der MVP einen Lead Opportunity Score berechnen.
+
+Dieser darf beispielsweise kombinieren:
+
+```text
+Website Relaunch Score
+Business Data Confidence
+Website Verification Confidence
+CRM Exclusions
+```
+
+Aber der Website Relaunch Score selbst muss separat erhalten bleiben.
+
+---
+
+# 61. CRM
+
+Jeder Lead soll einen CRM-Status besitzen.
+
+Empfohlene Stati:
+
+```text
+new
+qualified
+contacted
+follow_up
+proposal
+won
+lost
+not_fit
+```
+
+Labels im UI dürfen deutsch sein.
+
+Beispiel:
+
+```text
+Neu
+Qualifiziert
+Kontaktiert
+Follow-up
+Angebot
+Gewonnen
+Verloren
+Nicht relevant
+```
+
+---
+
+# 62. Lead Detail View
+
+Mindestens folgende Informationen:
+
+## Unternehmen
+
+- Firmenname
+- Kategorie
+- Adresse
+- Telefon
+- E-Mail
+- Website
+- Herkunft
+
+## Bewertung
+
+- Relaunch Score
+- Confidence
+- Score Breakdown
+
+## Website Analyse
+
+- analysierte Seiten
+- Kontaktformular
+- Kontaktseite
+- Impressum
+- Performance
+- SEO
+- Mobile
+- Accessibility
+- technische Probleme
+
+## CRM
+
+- Status
+- Priorität
+- Notizen
+- nächstes Follow-up
+
+## Provenance
+
+- aus welcher Quelle stammt welcher Wert?
+
+---
+
+# 63. Notes
+
+Nutzer muss Notizen hinzufügen können.
+
+Beispiel:
+
+```text
+27.09.2026
+Angerufen, Inhaber erst nächste Woche erreichbar.
+```
+
+Notizen müssen Zeitstempel besitzen.
+
+---
+
+# 64. CRM History
+
+Statusänderungen sollen nachvollziehbar bleiben.
+
+Beispiel:
+
+```text
+12:41
+Neu → Qualifiziert
+
+13:10
+Notiz hinzugefügt
+
+13:15
+Follow-up: 04.10.2026
+```
+
+Ein einfaches Event Log reicht.
+
+---
+
+# 65. Lead Tabelle
+
+Die Hauptansicht benötigt mindestens:
+
+```text
+Firma
+Ort
+Branche
+Website
+Relaunch Score
+Confidence
+CRM Status
+Quelle
+```
+
+---
+
+# 66. Filter
+
+Mindestens:
+
+```text
+Ort
+Branche
+Score min/max
+Confidence min
+CRM Status
+Website vorhanden
+Website Status
+Kontaktformular vorhanden
+Quelle
+```
+
+---
+
+# 67. Sortierung
+
+Mindestens:
+
+```text
+Relaunch Score
+Confidence
+Datum gefunden
+Firmenname
+```
+
+---
+
+# 68. Lead Suche vs CRM Daten
+
+Neue Suchjobs dürfen bestehende CRM-Daten nicht zerstören.
+
+Wenn derselbe Lead später erneut gefunden wird:
+
+Neue Source-Daten dürfen aktualisiert werden.
+
+Folgendes darf NICHT verloren gehen:
+
+- CRM Status
+- Notizen
+- Follow-up
+- manuelle Änderungen
+
+---
+
+# 69. Analyse erneut ausführen
+
+Lead Detail sollte ermöglichen:
+
+```text
+Website erneut suchen
+Website erneut validieren
+Website erneut analysieren
+```
+
+Vorherige Runs idealerweise historisch erhalten.
+
+---
+
+# 70. Batch Analyse
+
+Nach Lead-Suche sollen Leads automatisch oder als Batch analysiert werden können.
+
+Beispiel:
+
+```text
+428 Leads gefunden
+
+Website Discovery
+163 / 428
+
+Website Analyse
+81 / 428
+```
+
+UI muss Fortschritt zeigen.
+
+---
+
+# 71. Job System
+
+Lang laufende Operationen dürfen nicht an einen einzelnen HTTP Request gekoppelt sein.
+
+Mindestens folgende Jobs:
+
+```text
+lead_search
+website_discovery
+website_crawl
+website_analysis
+```
+
+Mögliche Stati:
+
+```text
+queued
+running
+completed
+completed_with_warnings
+failed
+cancelled
+```
+
+---
+
+# 72. Persistente Jobs
+
+Ein Seitenreload darf den Jobstatus nicht verlieren.
+
+Wenn der Server neu startet, sollen:
+
+- fertige Jobs erhalten bleiben,
+- unterbrochene Jobs erkannt werden,
+- Jobs möglichst erneut aufgenommen oder sauber als interrupted markiert werden.
+
+Für den MVP ist eine PostgreSQL-basierte Joblösung vollkommen ausreichend.
+
+Kein Redis-Zwang.
+
+---
+
+# 73. Concurrency
+
+Nicht 500 Websites gleichzeitig crawlen.
+
+Konfigurierbare Limits verwenden.
+
+Beispiel:
+
+```text
+sourceRequests = 2–5 parallel
+websiteCrawls = 2–4 parallel
+```
+
+Domain-spezifisch höfliche Limits verwenden.
+
+---
+
+# 74. Rate Limiting
+
+Pro externe Domain begrenzen.
+
+Retry nur für Fehler, bei denen Retry sinnvoll ist.
+
+Retry:
+
+```text
+408
+429
+5xx
+network timeout
+```
+
+Kein sinnloses Retry für:
+
+```text
+404
+```
+
+---
+
+# 75. Caching
+
+Cache insbesondere:
+
+- Source Queries
+- Website Discovery
+- DNS/URL Checks
+- analysierte Websites
+
+Beispiel:
+
+Wenn dieselbe Website vor zehn Minuten analysiert wurde:
+
+Nicht erneut vollständig crawlen, sofern Nutzer keinen Force Refresh verlangt.
+
+TTL konfigurierbar.
+
+---
+
+# 76. Fehlerbehandlung
+
+Fehler müssen lokal isoliert sein.
+
+Beispiel:
+
+```text
+Lead 1 → erfolgreich
+Lead 2 → Website timeout
+Lead 3 → erfolgreich
+Lead 4 → invalid SSL
+Lead 5 → erfolgreich
+```
+
+Gesamter Batch:
+
+```text
+completed_with_warnings
+```
+
+nicht:
+
+```text
+failed
+```
+
+---
+
+# 77. Structured Errors
+
+Verwende strukturierte Fehlercodes.
+
+Beispiele:
+
+```text
+OVERPASS_TIMEOUT
+OVERPASS_504
+SOURCE_BLOCKED
+WEBSITE_TIMEOUT
+WEBSITE_DNS_ERROR
+WEBSITE_SSL_ERROR
+CRAWLER_RENDER_ERROR
+SEARCH_PROVIDER_UNAVAILABLE
+WEBSITE_AMBIGUOUS
+```
+
+---
+
+# 78. Logging
+
+Logging muss strukturiert sein.
+
+Beispiel:
+
+```json
+{
+  "level": "warn",
+  "jobId": "...",
+  "leadId": "...",
+  "module": "crawler",
+  "code": "WEBSITE_TIMEOUT"
+}
+```
+
+Secrets und sensible API Keys niemals loggen.
+
+---
+
+# 79. Benutzerfreundliche Fehler
+
+Logs dürfen technisch sein.
+
+UI dagegen:
+
+```text
+OpenStreetMap konnte nach mehreren Versuchen nicht erreicht werden.
+Die Ergebnisse der übrigen Quellen wurden trotzdem gespeichert.
+```
+
+Nicht nur:
+
+```text
+Error 504
+```
+
+---
+
+# 80. Dashboard
+
+Dashboard darf simpel bleiben.
+
+Mindestens:
+
+```text
+Gesamtleads
+Neue Leads
+Qualifizierte Leads
+Kontaktiert
+Gewonnen
+```
+
+Außerdem letzte Suchjobs.
+
+Optional:
+
+```text
+Leads mit Score > 70
+```
+
+---
+
+# 81. Suchhistorie
+
+Speichere Suchjobs.
+
+Beispiel:
+
+```text
+Zahnarzt – Hamburg
+27.09.2026
+428 Leads
+Gelbe Seiten + OSM
+```
+
+Suchjob öffnen:
+
+- Suchparameter
+- Quelle
+- Source-Ergebnisse
+- Fehler
+- Anzahl Leads
+- Laufzeit
+
+---
+
+# 82. Export
+
+Mindestens CSV Export.
+
+Exportierbar:
+
+```text
+companyName
+street
+postalCode
+city
+phone
+email
+website
+websiteStatus
+relaunchScore
+analysisConfidence
+crmStatus
+```
+
+Keine kaputten CSVs bei Umlauten.
+
+UTF-8.
+
+---
+
+# 83. UI / UX Prinzipien
+
+App soll wie ein professionelles Business Tool wirken.
+
+Nicht wie ein Entwickler-Dashboard.
+
+Prinzipien:
+
+- klare Informationshierarchie
+- wenige unnötige Farben
+- Score gut erkennbar
+- Tabellen performant
+- Loading States
+- Empty States
+- klare Fehler
+- keine unverständlichen technischen IDs
+
+---
+
+# 84. Performance der Anwendung
+
+Bei hunderten Leads darf das Frontend nicht hängen.
+
+Lead Tabelle:
+
+- Pagination oder Virtualisierung
+- serverseitige Filterung bei Bedarf
+
+Analysen asynchron.
+
+---
+
+# 85. Datenbank Indizes
+
+Mindestens sinnvolle Indizes auf:
+
+```text
+lead.websiteDomain
+lead.phoneNormalized
+lead.city
+lead.crmStatus
+score.value
+job.status
+```
+
+Sowie weitere Felder entsprechend tatsächlicher Query-Nutzung.
+
+---
+
+# 86. Datenschutz
+
+Der MVP verarbeitet öffentlich zugängliche Unternehmensdaten.
+
+Trotzdem:
+
+- nur notwendige Daten speichern
+- Secrets schützen
+- Logs nicht unnötig mit personenbezogenen Daten füllen
+- Daten löschbar halten
+
+Architektur nicht absichtlich so bauen, dass später DSGVO-relevante Funktionen unmöglich werden.
+
+---
+
+# 87. Security
+
+Mindestens:
+
+- Input Validation
+- URL Validation
+- SSRF Schutz im Crawler
+- keine Requests an private Netzwerkadressen
+- keine `file://` URLs
+- keine localhost Targets aus externen Website-Daten
+- XSS sichere Darstellung gecrawlter Inhalte
+- API Keys serverseitig
+- sichere DB Queries über ORM / parameterisierte Queries
+
+---
+
+# 88. SSRF Schutz
+
+Crawler darf nicht blind folgende Ziele aufrufen:
+
+```text
+127.0.0.1
+localhost
+169.254.*
+10.*
+172.16-31.*
+192.168.*
+private IPv6 ranges
+```
+
+Nach DNS-Auflösung ebenfalls prüfen.
+
+Redirects müssen erneut validiert werden.
+
+---
+
+# 89. Robots und verantwortungsvolles Crawling
+
+Crawler soll sich wie ein verantwortungsvoller Analyse-Crawler verhalten.
+
+- vernünftiger User Agent
+- Rate Limits
+- keine aggressiven Requests
+- keine Login-Bereiche
+- keine CAPTCHA-Umgehung
+- keine Schutzmechanismen umgehen
+
+---
+
+# 90. Teststrategie
+
+Tests sind Teil der Implementierung, kein nachträgliches Extra.
+
+Mindestens:
+
+```text
+Unit Tests
+Integration Tests
+Crawler Fixtures
+E2E Tests
+```
+
+---
+
+# 91. Pflicht-Testfälle
+
+## Source Selection
+
+```text
+Gelbe Seiten = false
+OSM = false
+```
+
+→ Formular blockiert.
+
+```text
+Gelbe Seiten = true
+OSM = false
+```
+
+→ erlaubt.
+
+```text
+Gelbe Seiten = false
+OSM = true
+```
+
+→ erlaubt.
+
+---
+
+# 92. Google Places Test
+
+Kein API Key:
+
+→ Option deaktiviert oder verborgen.
+
+API Key:
+
+→ Option verfügbar.
+
+---
+
+# 93. Dedupe Test
+
+OSM:
+
+```text
+Mustermann GmbH
+Musterstraße 5
+0451 12345
+```
+
+Gelbe Seiten:
+
+```text
+Mustermann GmbH
+Musterstr. 5
++49 451 12345
+```
+
+Erwartung:
+
+```text
+1 Lead
+2 Source Records
+```
+
+---
+
+# 94. Website Discovery Test
+
+Source liefert:
+
+```text
+website = null
+```
+
+Search Provider findet:
+
+```text
+https://mustermann.de
+```
+
+Website enthält:
+
+```text
+Mustermann GmbH
+Musterstraße 5
+```
+
+Erwartung:
+
+```text
+websiteStatus = verified
+websiteUrl = https://mustermann.de
+```
+
+---
+
+# 95. Kein falsches „Keine Website“
+
+Source ohne Website.
+
+Search Provider unavailable.
+
+Erwartung:
+
+```text
+websiteStatus = search_failed
+```
+
+NICHT:
+
+```text
+no_website_found
+```
+
+---
+
+# 96. Contact Form Test
+
+Homepage:
+
+```text
+kein Formular
+```
+
+`/kontakt`:
+
+```html
+<form>...</form>
+```
+
+Erwartung:
+
+```text
+hasContactForm = true
+```
+
+---
+
+# 97. SPA Test
+
+Homepage liefert zunächst leeres App Root.
+
+Browser Rendering erzeugt Navigation und Kontaktformular.
+
+Erwartung:
+
+```text
+Navigation erkannt
+Kontaktseite analysiert
+Formular erkannt
+```
+
+---
+
+# 98. Unknown Test
+
+Browser Rendering schlägt fehl.
+
+Erwartung:
+
+```text
+mobileResponsive = unknown
+```
+
+Confidence sinkt.
+
+Relaunch Score wird nicht künstlich wegen dieses unbekannten Signals erhöht.
+
+---
+
+# 99. Overpass Test
+
+Simuliere:
+
+```text
+HTTP 504
+```
+
+Erwartung:
+
+```text
+Retry
+```
+
+danach alternativ:
+
+```text
+Fallback Endpoint
+```
+
+Falls weiterhin Fehler:
+
+```text
+source failed
+overall job completed_with_warnings
+```
+
+sofern andere Quellen Ergebnisse liefern.
+
+---
+
+# 100. Persistenz Test
+
+Lead erhält:
+
+```text
+CRM Status = contacted
+Notiz = "Angerufen"
+```
+
+Lead wird später in neuer Suche erneut gefunden.
+
+Erwartung:
+
+```text
+CRM Status weiterhin contacted
+Notiz weiterhin vorhanden
+Source Daten aktualisiert
+```
+
+---
+
+# 101. Score Test
+
+Score muss bei identischen Inputs deterministisch sein.
+
+Zwei Analysen gleicher Fixture:
+
+```text
+gleicher Score
+```
+
+außer dynamische Messwerte bewegen sich innerhalb definierter Toleranzen.
+
+---
+
+# 102. Crawling Fixtures
+
+Erstelle lokale Fixture Websites.
+
+Mindestens:
+
+```text
+fixture-good-site
+fixture-bad-site
+fixture-contact-subpage
+fixture-spa
+fixture-broken-links
+fixture-no-website
+```
+
+Tests dürfen nicht vollständig von echten externen Websites abhängen.
+
+---
+
+# 103. Definition of Done
+
+Der MVP gilt erst als fertig, wenn ALLE folgenden Punkte erfüllt sind:
+
+- Anwendung startet lokal
+- Datenbankmigrationen funktionieren
+- `.env.example` vorhanden
+- README vorhanden
+- Suche funktioniert
+- OSM funktioniert
+- Gelbe-Seiten-Adapter ist implementiert
+- Source Auswahl funktioniert
+- Google Places optional
+- Leads werden normalisiert
+- Duplikate werden zusammengeführt
+- Website Discovery funktioniert
+- Website Verifikation funktioniert
+- kein falsches `no website`
+- Unterseiten werden gecrawlt
+- Kontaktformular auf Unterseite wird erkannt
+- SPA-Grundsupport vorhanden
+- Score wird berechnet
+- Score Breakdown vorhanden
+- Evidence gespeichert
+- Confidence vorhanden
+- CRM Status funktioniert
+- Notes funktionieren
+- Follow-up Feld funktioniert
+- Suchhistorie funktioniert
+- Analysehistorie funktioniert
+- Filter funktionieren
+- CSV Export funktioniert
+- Fehler einzelner Leads zerstören keinen Batch
+- Retry vorhanden
+- Overpass 504 behandelt
+- API Keys geschützt
+- SSRF Schutz vorhanden
+- Unit Tests grün
+- Integration Tests grün
+- E2E Smoke Test grün
+- Typecheck grün
+- Linter grün
+- Production Build grün
+
+---
+
+# 104. README Anforderungen
+
+README muss erklären:
+
+```text
+Was ist die Anwendung?
+Voraussetzungen
+Installation
+Environment Variables
+Datenbank Setup
+Start Development
+Start Production
+Tests
+Crawler
+Datenquellen
+API Keys
+Bekannte Einschränkungen
+```
+
+Start für einen neuen Entwickler soll möglichst ungefähr sein:
+
+```bash
+git clone ...
+cp .env.example .env
+docker compose up -d
+npm install
+npm run db:migrate
+npm run dev
+```
+
+Passe Befehle an tatsächlichen Stack an.
+
+---
+
+# 105. Seed Data
+
+Erstelle Seed-Daten, damit die Anwendung unmittelbar demonstriert werden kann.
+
+Keine echten Personen notwendig.
+
+Beispielunternehmen:
+
+```text
+Nordlicht Tischlerei GmbH
+Hanse Dental GmbH
+Muster & Partner Steuerberatung
+```
+
+Seed Daten sollen unterschiedliche Scores demonstrieren.
+
+---
+
+# 106. Demo ohne externe APIs
+
+Die App muss auch ohne Google-Key starten.
+
+Ohne Google Places soll lediglich die entsprechende Funktion fehlen.
+
+Nicht:
+
+```text
+App cannot start: GOOGLE_API_KEY missing
+```
+
+---
+
+# 107. Environment
+
+Beispiel:
+
+```env
+DATABASE_URL=
+
+APP_URL=
+
+GOOGLE_PLACES_API_KEY=
+
+WEBSITE_DISCOVERY_PROVIDER=
+
+CRAWLER_MAX_PAGES=50
+CRAWLER_MAX_DEPTH=4
+CRAWLER_CONCURRENCY=3
+```
+
+Nur tatsächlich benötigte Variablen hinzufügen.
+
+---
+
+# 108. Future-Proofing
+
+Keine übertriebene Abstraktion.
+
+Aber folgende Punkte sollen erweiterbar sein:
+
+```text
+LeadSourceAdapter
+WebsiteDiscoveryProvider
+ScoringProfile
+```
+
+Dadurch kann aus dem Website-Relaunch-Finder später das allgemeinere Freelancer-Akquise-Tool entstehen.
+
+---
+
+# 109. Spätere Produktvision
+
+Nach erfolgreichem MVP können beispielsweise weitere Module entstehen:
+
+```text
+SEO Lead Scoring
+Google Business Analyse
+Social Media Analyse
+Automatische Outreach Vorlagen
+E-Mail Integration
+Follow-up Automatisierung
+Pipeline Analytics
+Freelancer Projektmanagement
+Angebote
+Rechnungen
+Kundenportal
+```
+
+Diese gehören NICHT in den jetzigen MVP.
+
+---
+
+# 110. Autonomous Coding Agent Role
+
+Ab diesem Abschnitt gelten direkte Arbeitsanweisungen an den Coding-Agenten.
+
+---
+
+## SYSTEM ROLE
+
+Du agierst gleichzeitig als:
+
+- Principal Full-Stack Engineer
+- Software Architect
+- Product Engineer
+- QA Engineer
+- Security Engineer
+- DevOps Engineer
+
+Deine Aufgabe ist nicht, lediglich Code vorzuschlagen.
+
+Deine Aufgabe ist:
+
+> Den beschriebenen MVP vollständig zu planen, zu implementieren, auszuführen, zu testen, Fehler selbstständig zu finden, zu beheben und bis zu einem stabilen lauffähigen Zustand fertigzustellen.
+
+---
+
+# 111. Autonomie
+
+Arbeite autonom.
+
+Frage NICHT nach jedem Abschnitt:
+
+```text
+Soll ich fortfahren?
+```
+
+Frage NICHT:
+
+```text
+Soll ich als Nächstes das Backend bauen?
+```
+
+Frage NICHT:
+
+```text
+Möchtest du, dass ich die Tests jetzt implementiere?
+```
+
+Stattdessen:
+
+```text
+planen
+↓
+implementieren
+↓
+testen
+↓
+Fehler analysieren
+↓
+beheben
+↓
+erneut testen
+↓
+nächsten Schritt ausführen
+```
+
+bis die Definition of Done erreicht ist.
+
+---
+
+# 112. Entscheidungen selbst treffen
+
+Wenn mehrere technisch sinnvolle Varianten bestehen:
+
+1. vorhandenen Code analysieren,
+2. einfachste robuste Lösung wählen,
+3. Entscheidung dokumentieren,
+4. implementieren.
+
+Blockiere nicht wegen unwichtiger Architekturentscheidungen.
+
+Beispiel:
+
+```text
+Prisma oder Drizzle?
+```
+
+Wenn beides möglich wäre:
+
+→ selbst entscheiden.
+
+---
+
+# 113. Bestehendes Repository zuerst analysieren
+
+Bevor du Code schreibst:
+
+1. Repository-Struktur prüfen
+2. vorhandenen Stack bestimmen
+3. vorhandene Dependencies prüfen
+4. bestehende Features identifizieren
+5. vorhandene Migrationen prüfen
+6. aktuelle Tests ausführen
+7. bestehende Fehler identifizieren
+
+Bestehenden funktionierenden Code nicht grundlos ersetzen.
+
+---
+
+# 114. Kein Rewrite aus Bequemlichkeit
+
+Wenn bereits funktionierende Module vorhanden sind:
+
+→ verbessern.
+
+Nicht komplette Anwendung neu schreiben, nur weil du lieber einen anderen Stack verwendest.
+
+Rewrite nur bei klarer technischer Notwendigkeit.
+
+---
+
+# 115. Assumptions
+
+Wenn Details fehlen, verwende sinnvolle Defaults.
+
+Dokumentiere wichtige Annahmen beispielsweise in:
+
+```text
+docs/DECISIONS.md
+```
+
+oder:
+
+```text
+docs/ASSUMPTIONS.md
+```
+
+Fehlende Kleinigkeiten sind kein Grund, den Nutzer zu blockieren.
+
+---
+
+# 116. Externe Secrets
+
+Wenn ein optionaler API Key fehlt:
+
+→ Feature optional deaktivieren.
+
+Beispiel:
+
+```text
+Google Places Key fehlt
+```
+
+Dann:
+
+```text
+OSM + Gelbe Seiten funktionieren weiterhin.
+```
+
+Nicht stoppen.
+
+---
+
+# 117. Keine Fake-Implementierungen
+
+Eine Funktion gilt nicht als implementiert, wenn sie nur aus:
+
+```ts
+TODO
+```
+
+oder:
+
+```ts
+return mockData
+```
+
+besteht.
+
+Mocks sind ausschließlich für Tests oder Demo-Fallbacks zulässig.
+
+Produktionspfade müssen real implementiert sein.
+
+---
+
+# 118. Keine reine UI-Fassade
+
+Buttons müssen funktionieren.
+
+Insbesondere:
+
+```text
+Search
+Analyze
+Retry
+Reanalyze
+Filter
+Export
+Status ändern
+Notiz speichern
+```
+
+Keine UI-Elemente ohne Backend-Wirkung.
+
+---
+
+# 119. Kein Happy-Path-only-Code
+
+Berücksichtige:
+
+- Timeouts
+- leere Ergebnisse
+- Netzwerkfehler
+- kaputte Websites
+- Redirects
+- SSL Probleme
+- Rate Limits
+- doppelte Daten
+- ungültige URLs
+- fehlende API Keys
+
+---
+
+# 120. Test-Driven Debug Loop
+
+Nach jedem größeren Modul:
+
+```text
+Implementieren
+↓
+Tests
+↓
+Typecheck
+↓
+Lint
+↓
+relevante Integration ausführen
+```
+
+Bei Fehler:
+
+```text
+Root Cause bestimmen
+↓
+Fix
+↓
+Test erneut
+```
+
+Nicht einfach Fehler auskommentieren.
+
+---
+
+# 121. Keine Test-Manipulation
+
+Wenn ein Test fehlschlägt:
+
+Zuerst Implementation prüfen.
+
+Nicht Test löschen oder Erwartungen abschwächen, nur damit CI grün wird.
+
+Tests dürfen geändert werden, wenn die ursprüngliche Annahme nachweislich falsch ist.
+
+---
+
+# 122. Realer End-to-End-Test
+
+Vor Abschluss mindestens einen kompletten Flow testen:
+
+```text
+Suche erstellen
+↓
+Leads importieren
+↓
+Duplikate mergen
+↓
+Website Discovery
+↓
+Website Crawl
+↓
+Analyse
+↓
+Score
+↓
+Lead Detail öffnen
+↓
+CRM Status ändern
+↓
+Notiz speichern
+↓
+CSV exportieren
+```
+
+---
+
+# 123. Produktions-Build
+
+Vor Abschluss zwingend:
+
+```text
+production build
+```
+
+Nicht nur Development Server testen.
+
+---
+
+# 124. Abschlussprüfung
+
+Vor Abschluss folgende Befehle bzw. jeweilige Stack-Äquivalente ausführen:
+
+```bash
+test
+lint
+typecheck
+build
+```
+
+Alle müssen erfolgreich sein.
+
+---
+
+# 125. UI manuell prüfen
+
+Automatisierte Tests reichen nicht vollständig.
+
+Öffne wesentliche Views mit Browser Automation und überprüfe:
+
+- Layout
+- Navigation
+- Tabellen
+- Formulare
+- Modals
+- Loading
+- Error States
+- Lead Details
+
+Offensichtliche UI-Probleme beheben.
+
+---
+
+# 126. Performance prüfen
+
+Achte insbesondere auf:
+
+- unnötige N+1 Queries
+- unlimitierte Parallel Requests
+- riesige JSON Payloads
+- unbounded Crawls
+- Memory Leaks
+- Browser Instanzen
+
+Browser Sessions sauber schließen.
+
+---
+
+# 127. Security Review
+
+Vor Abschluss speziell kontrollieren:
+
+```text
+SSRF
+XSS
+Secret Leakage
+SQL Injection
+Unsafe redirects
+Crawler private network access
+```
+
+---
+
+# 128. Datenmigrationen
+
+Schemaänderungen sauber über Migrationen durchführen.
+
+Nicht:
+
+```text
+Datenbank löschen und neu erstellen
+```
+
+als normale Entwicklungsstrategie.
+
+---
+
+# 129. Git
+
+Wenn Git vorhanden:
+
+- kleine logisch zusammenhängende Änderungen
+- verständliche Commit-Struktur
+
+Keine Secrets committen.
+
+Keine riesigen generierten Dateien committen.
+
+---
+
+# 130. Arbeitsreihenfolge
+
+Arbeite ungefähr in folgender Reihenfolge.
+
+Diese Reihenfolge darf angepasst werden, wenn das bestehende Repository einen anderen sinnvolleren Weg vorgibt.
+
+---
+
+## Phase 1 – Repository Audit
+
+- Code verstehen
+- bestehende Fehler finden
+- Stack identifizieren
+- vorhandene Features bestimmen
+
+---
+
+## Phase 2 – Foundation
+
+- Datenbank
+- Konfiguration
+- Settings
+- Jobstruktur
+- Logging
+- Fehlercodes
+
+---
+
+## Phase 3 – Search Sources
+
+- Source Interface
+- OSM
+- Gelbe Seiten
+- optional Google Places
+
+---
+
+## Phase 4 – Normalization & Dedupe
+
+- Firmenname
+- Telefonnummer
+- Adresse
+- URL
+- Merge Engine
+
+---
+
+## Phase 5 – Website Discovery
+
+- vorhandene URLs prüfen
+- Suchprovider
+- Kandidaten
+- Verifikation
+- Confidence
+
+---
+
+## Phase 6 – Crawler
+
+- Fetch
+- Sitemap
+- Navigation
+- Priorisierung
+- Playwright Fallback
+- Crawl Budget
+
+---
+
+## Phase 7 – Website Analysis
+
+- Forms
+- Contact Data
+- SEO
+- Technical
+- Mobile
+- Accessibility
+- Performance
+
+---
+
+## Phase 8 – Scoring
+
+- Kriterien
+- Gewichte
+- Evidence
+- Unknown Handling
+- Confidence
+
+---
+
+## Phase 9 – CRM
+
+- Pipeline Status
+- Notes
+- Follow-up
+- History
+
+---
+
+## Phase 10 – UI
+
+- Dashboard
+- Search
+- Jobs
+- Leads
+- Filters
+- Lead Detail
+- Settings
+
+---
+
+## Phase 11 – Hardening
+
+- Retries
+- caching
+- concurrency
+- SSRF
+- rate limits
+
+---
+
+## Phase 12 – Testing
+
+- fixtures
+- unit
+- integration
+- E2E
+- failure simulation
+
+---
+
+## Phase 13 – Final QA
+
+- lint
+- typecheck
+- tests
+- build
+- browser smoke tests
+- README
+
+---
+
+# 131. Quality Gate für Website-Analyse
+
+Website Analysis ist erst fertig, wenn mindestens folgende reale Logik existiert:
+
+```text
+Homepage analysed
+Navigation discovered
+Sitemap attempted
+Relevant subpages discovered
+Contact page prioritised
+Forms sitewide searched
+Analysis evidence persisted
+Score generated
+Confidence generated
+```
+
+Nur Homepage Parsing reicht ausdrücklich NICHT.
+
+---
+
+# 132. Quality Gate für Website Discovery
+
+Website Discovery ist erst fertig, wenn:
+
+```text
+source URL validation
+fallback discovery
+candidate ranking
+identity verification
+ambiguous state
+failed-search state
+verified state
+```
+
+existieren.
+
+Ein simples:
+
+```ts
+if (!lead.website) lead.hasWebsite = false
+```
+
+ist ausdrücklich falsch.
+
+---
+
+# 133. Quality Gate für Scoring
+
+Scoring ist erst fertig, wenn:
+
+```text
+score
+breakdown
+raw signals
+evidence
+unknown state
+confidence
+```
+
+gespeichert und im UI sichtbar sind.
+
+Ein einzelner Magic-Number Score ohne Erklärung ist nicht akzeptabel.
+
+---
+
+# 134. Quality Gate für Source Reliability
+
+Ein Source Adapter ist erst fertig, wenn mindestens getestet wurde:
+
+```text
+Success
+Empty result
+Timeout
+429
+500
+Invalid response
+```
+
+OSM zusätzlich:
+
+```text
+504
+```
+
+---
+
+# 135. Quality Gate für CRM
+
+CRM ist erst fertig, wenn:
+
+- Status persistent ist
+- Notizen persistent sind
+- Search Refresh CRM Daten nicht überschreibt
+- Statushistorie nachvollziehbar ist
+
+---
+
+# 136. Prioritäten bei Konflikten
+
+Wenn Anforderungen miteinander konkurrieren:
+
+## Priorität 1
+
+Korrekte Daten.
+
+## Priorität 2
+
+Keine falschen Aussagen.
+
+## Priorität 3
+
+Stabilität.
+
+## Priorität 4
+
+Nachvollziehbarkeit.
+
+## Priorität 5
+
+Performance.
+
+## Priorität 6
+
+UI Polish.
+
+Feature-Menge ist weniger wichtig.
+
+---
+
+# 137. Verbotene Abkürzungen
+
+Folgende Lösungen sind NICHT akzeptabel:
+
+```text
+nur Homepage crawlen
+
+fehlende Source Website =
+keine Website
+
+Crawler Fehler =
+Feature nicht vorhanden
+
+ein einziger Overpass Request ohne Retry
+
+Score ohne Breakdown
+
+Score ohne Evidence
+
+unbegrenztes Crawling
+
+100 parallele Browser
+
+API Key zwingend für App Start
+
+Google Places zwingend
+
+CRM Daten bei erneutem Import überschreiben
+
+Fehler eines Leads zerstört gesamten Batch
+```
+
+---
+
+# 138. Ergebnis des Coding Runs
+
+Am Ende deiner Arbeit soll das Repository enthalten:
+
+```text
+vollständige Anwendung
+Datenbank Schema
+Migrationen
+Crawler
+Scoring Engine
+Tests
+Fixtures
+README
+.env.example
+Docker Setup
+```
+
+---
+
+# 139. Abschlussbericht des Agenten
+
+Wenn die Implementierung abgeschlossen ist, liefere einen kurzen Bericht.
+
+Format:
+
+```markdown
+# MVP Implementation Report
+
+## Implemented
+
+...
+
+## Architecture
+
+...
+
+## Tests
+
+Unit:
+Integration:
+E2E:
+Build:
+
+## External integrations
+
+OSM:
+Gelbe Seiten:
+Google Places:
+
+## Known limitations
+
+...
+
+## How to run
+
+...
+
+## Next recommended milestone
+
+...
+```
+
+Keine lange Selbstdarstellung.
+
+Fakten.
+
+---
+
+# 140. Definition des Erfolgs
+
+Das Projekt ist erfolgreich, wenn der Nutzer beispielsweise nach einer Branche in einer Stadt suchen kann und am Ende eine Liste erhält wie:
+
+```text
+Unternehmen A
+
+Website:
+https://...
+
+Website verifiziert:
+Ja
+
+Relaunch Score:
+84
+
+Confidence:
+96
+
+Probleme:
+- mobile overflow
+- sehr langsame Startseite
+- mehrere Broken Links
+- keine klare Anfrage-CTA
+
+Positiv:
+- Kontaktformular auf /kontakt gefunden
+- HTTPS aktiv
+- Impressum vorhanden
+
+CRM:
+Neu
+```
+
+und die angezeigten Aussagen nachweisbar aus tatsächlich gecrawlten Daten stammen.
+
+---
+
+# 141. Fundamentales Produktversprechen
+
+Das wichtigste Versprechen der Anwendung lautet:
+
+> Der Nutzer soll den Ergebnissen vertrauen können.
+
+Ein Lead-Finder mit 5.000 unzuverlässigen Leads ist schlechter als ein Lead-Finder mit 500 sauber validierten Leads.
+
+Ein Score von 91 ohne nachvollziehbare Grundlage ist wertlos.
+
+Ein Score von 78 mit vollständiger Evidenz, hoher Analyse-Confidence und reproduzierbaren Kriterien ist wertvoll.
+
+Entwickle den MVP nach diesem Prinzip.
+
+---
+
+# 142. START INSTRUCTION
+
+Beginne jetzt mit der Umsetzung.
+
+Führe zunächst einen vollständigen Audit des vorhandenen Repositories durch.
+
+Erstelle danach intern einen Implementierungsplan und arbeite ihn vollständig ab.
+
+Unterbrich den Workflow nicht für triviale Rückfragen.
+
+Nutze sinnvolle technische Defaults, wenn keine Entscheidung vorgegeben ist.
+
+Implementiere keine bloßen Platzhalter.
+
+Führe nach jedem relevanten Abschnitt Tests aus.
+
+Wenn Fehler auftreten, analysiere und behebe sie selbstständig.
+
+Wiederhole diesen Prozess, bis:
+
+```text
+Tests erfolgreich
+Typecheck erfolgreich
+Lint erfolgreich
+Production Build erfolgreich
+End-to-End Kernworkflow erfolgreich
+```
+
+sind.
+
+Erst danach gilt der MVP als abgeschlossen.
